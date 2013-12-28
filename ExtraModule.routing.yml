@@ -1,0 +1,7 @@
+ExtraModule_hello:
+  path: '/ExtraModule/hello/{name}'
+  defaults:
+    _controller: '\Drupal\ExtraModule\Controller\DefaultController::helloAction'
+    _title: 'ExtraModule say hello!'
+  requirements:
+    _permission: 'access content'

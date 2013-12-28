@@ -1,0 +1,20 @@
+<?php
+
+/**
+ * @file
+ * Contains hooks ExtraModule
+ */
+
+/**
+ * Implements hook_help().
+ */
+
+function ExtraModule_help($path, $arg) {
+
+  switch ($path) {
+    case 'admin/help#ExtraModule':
+      $output = 'Extra module';
+      return $output;
+    break;
+  }
+}
