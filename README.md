@@ -17,7 +17,7 @@ class DefaultController extends ControllerBase{
    * helloAction
    * @param  string $name 
    *
-   * @Permission(permission="access content")
+   * @Permission("access content")
    */
   public function helloAction($name) {
     return "Hello " . $name . "!";
