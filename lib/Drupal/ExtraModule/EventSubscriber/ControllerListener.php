@@ -56,11 +56,9 @@ class ControllerListener implements EventSubscriberInterface{
     $has_permission = false;
     foreach ($this->reader->getMethodAnnotations($method) as $configuration) {
       foreach ($user_roles as $user_role) {
-
         if ($user_role->hasPermission($configuration->getPermission())){
           $has_permission = true;
         }
-
       }
 
       if (!$has_permission){
