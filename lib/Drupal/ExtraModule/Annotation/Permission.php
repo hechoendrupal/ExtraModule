@@ -1,10 +1,27 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\ExtraModule\Annotation\Permission.
+ */
+
 namespace Drupal\ExtraModule\Annotation;
 
-use Drupal\Component\Annotation\AnnotationInterface;
-use Drupal\Component\Annotation\Plugin;
-
+/**
+ * Defines an Permission annotation object.
+ *
+ * @Annotation
+ */
 class Permission {
+
+  /**
+   * permission
+   * @var string
+   */
+  public $permission;
+
+  public function getPermission(){
+    return $this->permission;
+  }
 
 }

@@ -3,12 +3,14 @@
 namespace Drupal\ExtraModule\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-
+use Drupal\ExtraModule\Annotation\Permission;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 
+/**
+ * @Permission(perm="Admin permission")
+ */
 class DefaultController extends ControllerBase implements ContainerInjectionInterface {
-
 
   public function __constructor() {
   }
@@ -17,11 +19,9 @@ class DefaultController extends ControllerBase implements ContainerInjectionInte
     return new static(
     );
   }
-  
+
   /**
-   * helloAction
-   * @param  string $name Get
-   * @return [type]       [description]
+   * @Permission(permission="administer block")
    */
   public function helloAction($name) {
     return "Hello " . $name . "!";

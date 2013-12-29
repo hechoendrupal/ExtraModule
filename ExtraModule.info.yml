@@ -1,5 +1,5 @@
 name: ExtraModule
 type: module
-description: Extra module
+description: "Extra module"
 core: 8.x
 package: tools
