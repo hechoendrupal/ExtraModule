@@ -7,6 +7,7 @@ Usage
 ==
 
 * Download and enable module
+* Use your awesome powers
 
 ```php
 
@@ -25,5 +26,10 @@ class DefaultController extends ControllerBase{
 }
 
 ```
+Roadmap
+=======
 
+* Twig Filesystem
+* Template annotation
+* Permissions in YML file
 
