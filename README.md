@@ -64,5 +64,4 @@ Roadmap
 =======
 
 * Template annotation
-* Permissions in YML file
 
