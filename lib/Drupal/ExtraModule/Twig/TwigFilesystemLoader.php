@@ -47,14 +47,13 @@ class TwigFilesystemLoader extends \Twig_Loader_Filesystem {
           throw new \InvalidArgumentException(sprintf('Template name "%s" is not valid (format is "module::templates/template.html.twig").', $name));
         }
 
-        $module = $matches[1];
-        $template = $matches[3];
-        $html = $matches[4];
-        $twig = $matches[5];
+        list(,$module,,$template,$html,$twig) = $matches;
 
         $path = drupal_get_path('module', $module) ? drupal_get_path('module', $module) : drupal_get_path('theme', $module);
-        $path .= $module . '/templates/' . $template .'.'. $html . '.' . $twig;
-        $file = $path;
+
+        if (!empty($path)){
+          $file = $path . $module . '/templates/' . $template .'.'. $html . '.' . $twig;
+        }
 
       } catch (\Exception $e) {
         $previous = $e;
