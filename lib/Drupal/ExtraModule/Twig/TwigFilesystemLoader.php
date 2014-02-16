@@ -37,9 +37,7 @@ class TwigFilesystemLoader extends \Twig_Loader_Filesystem {
     } catch (\Twig_Error_Loader $e) {
       $previous = $e;
 
-      // for BC
       try {
-
         $name = $template;
         if (false !== strpos($name, '..')) {
           throw new \RuntimeException(sprintf('Template name "%s" contains invalid characters.', $name));
