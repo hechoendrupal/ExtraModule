@@ -22,6 +22,7 @@ class TwigFilesystemLoader extends \Twig_Loader_Filesystem {
    * @return [type]           [description]
    */
   protected function findTemplate($template) {
+
     $logicalName = (string) $template;
 
     if (isset($this->cache[$logicalName])) {
@@ -30,37 +31,40 @@ class TwigFilesystemLoader extends \Twig_Loader_Filesystem {
 
     $file = null;
     $previous = null;
+
     try {
-        $file = parent::findTemplate($template);
+      $file = parent::findTemplate($template);
     } catch (\Twig_Error_Loader $e) {
-        $previous = $e;
+      $previous = $e;
 
-        // for BC
-        try {
+      // for BC
+      try {
 
-          $name = $template;
-          if (false !== strpos($name, '..')) {
-            throw new \RuntimeException(sprintf('Template name "%s" contains invalid characters.', $name));
-          }
-
-          if (!preg_match('/^([^:]*):([^:]*):(.+)\.([^\.]+)\.([^\.]+)$/', $name, $matches)) {
-            throw new \InvalidArgumentException(sprintf('Template name "%s" is not valid (format is "module:section:template.format.engine").', $name));
-          }
-
-          $path = drupal_get_path('module', $matches[1]) . '/templates/' . $matches[3] .'.'. $matches[4] . '.' . $matches[5];
-
-            try {
-                $file = $path;
-            } catch (\InvalidArgumentException $e) {
-                $previous = $e;
-            }
-        } catch (\Exception $e) {
-            $previous = $e;
+        $name = $template;
+        if (false !== strpos($name, '..')) {
+          throw new \RuntimeException(sprintf('Template name "%s" contains invalid characters.', $name));
         }
+
+        if (!preg_match('/^([^:]*):([^:]*):(.+)\.([^\.]+)\.([^\.]+)$/', $name, $matches)) {
+          throw new \InvalidArgumentException(sprintf('Template name "%s" is not valid (format is "module::templates/template.html.twig").', $name));
+        }
+
+        $module = $matches[1];
+        $template = $matches[3];
+        $html = $matches[4];
+        $twig = $matches[5];
+
+        $path = drupal_get_path('module', $module) ? drupal_get_path('module', $module) : drupal_get_path('theme', $module);
+        $path .= $module . '/templates/' . $template .'.'. $html . '.' . $twig;
+        $file = $path;
+
+      } catch (\Exception $e) {
+        $previous = $e;
+      }
     }
 
     if (false === $file || null === $file) {
-        throw new \Twig_Error_Loader(sprintf('Unable to find template "%s".', $logicalName), -1, null, $previous);
+      throw new \Twig_Error_Loader(sprintf('Unable to find template "%s".', $logicalName), -1, null, $previous);
     }
 
     return $this->cache[$logicalName] = $file;
