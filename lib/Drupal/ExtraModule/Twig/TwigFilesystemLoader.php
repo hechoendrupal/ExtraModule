@@ -52,7 +52,7 @@ class TwigFilesystemLoader extends \Twig_Loader_Filesystem {
         $path = drupal_get_path('module', $module) ? drupal_get_path('module', $module) : drupal_get_path('theme', $module);
 
         if (!empty($path)){
-          $file = $path . $module . '/templates/' . $template .'.'. $html . '.' . $twig;
+          $file = $path . '/templates/' . $template .'.'. $html . '.' . $twig;
         }
 
       } catch (\Exception $e) {
