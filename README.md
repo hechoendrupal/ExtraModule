@@ -44,22 +44,6 @@ class DefaultController extends ControllerBase{
 
 ```
 
-```php
-// Controller
-class DefaultController extends ControllerBase implements ContainerInjectionInterface {
-  //...
-  public function helloAction($name) {
-    $template = $this->twig->loadTemplate('module_name::hello.html.twig');
-
-    return $template->render(array(
-      'name' => $name
-    ));
-  }
-  //...
-}
-```
-
-
 Roadmap
 =======
 

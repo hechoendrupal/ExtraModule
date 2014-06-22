@@ -12,4 +12,4 @@ services:
     class: Drupal\ExtraModule\EventSubscriber\ControllerListener
     tags:
       - { name: event_subscriber }
-    arguments: ['@annotation_reader','@container.namespaces', '@current_user']
+    arguments: ['@annotation_reader','@container.namespaces', '@current_user','@controller_resolver', '@entity.manager']

@@ -7,11 +7,14 @@ use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Entity\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Drupal\Core\Controller\ControllerResolverInterface;
 
-class ControllerListener implements EventSubscriberInterface{
-
+class ControllerListener implements EventSubscriberInterface
+{
   /**
    * @var Reader
    */
@@ -22,10 +25,19 @@ class ControllerListener implements EventSubscriberInterface{
    *
    * @param Reader $reader An Reader instance
    */
-  public function __construct(Reader $reader, \Traversable $namespaces, AccountInterface $account){
+  public function __construct(
+    Reader $reader,
+    \Traversable $namespaces,
+    AccountInterface $account,
+    ControllerResolverInterface $controller_resolver,
+    EntityManagerInterface $entity_manager
+  )
+  {
       $this->reader = $reader;
       $this->namespace = $namespaces;
       $this->account = $account;
+      $this->controller_resolver = $controller_resolver;
+      $this->entity_manager = $entity_manager;
   }
 
   /**
@@ -35,41 +47,48 @@ class ControllerListener implements EventSubscriberInterface{
    *
    * @param FilterControllerEvent $event A FilterControllerEvent instance
    */
-  public function onKernelController(FilterControllerEvent $event){
-
+  public function onKernelController(FilterControllerEvent $event)
+  {
     if (!is_array($controller = $event->getController())) {
       return;
     }
 
-    $className = class_exists('Doctrine\Common\Util\ClassUtils') ? ClassUtils::getClass($controller[0]) : get_class($controller[0]);
+    $request  = $event->getRequest();
+    $_content = $request->attributes->get('_content');
+    if ($_content) {
+      $controller = $this->controller_resolver->getControllerFromDefinition($_content);
+    }
+
+    $className = ClassUtils::getClass($controller[0]);
     $object    = new \ReflectionClass($className);
     $method    = $object->getMethod($controller[1]);
 
-    \Doctrine\Common\Annotations\AnnotationRegistry::registerAutoloadNamespace(
-        'Drupal\ExtraModule\Annotation',
-        dirname(__DIR__).'/../../'
+    // Register ExtraModule annotations
+    \Doctrine\Common\Annotations\AnnotationRegistry::registerFile(
+      dirname(__DIR__).'/Annotation/Permission.php'
     );
 
-    $user_roles = $this->account->getRoles();
-    $user_roles = entity_load_multiple('user_role', $user_roles);
+    $roles = $this->account->getRoles();
+    $user_roles = $this->entity_manager
+      ->getStorage('user_role')
+        ->loadMultiple($roles);
 
     $has_permission = false;
     foreach ($this->reader->getMethodAnnotations($method) as $configuration) {
       foreach ($user_roles as $user_role) {
-        if ($user_role->hasPermission($configuration->getPermission())){
+        $p = $configuration->getPermission();
+        if ($user_role->hasPermission($p) || in_array('administrator', $roles)) {
           $has_permission = true;
         }
       }
-
-      if (!$has_permission){
+      if (!$has_permission) {
         throw new AccessDeniedHttpException();
       }
     }
-
-
   }
 
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents()
+  {
     return array(
       KernelEvents::CONTROLLER => 'onKernelController',
     );
