@@ -12,15 +12,16 @@ namespace Drupal\ExtraModule\Annotation;
  *
  * @Annotation
  */
-class Permission {
-
+class Permission
+{
   /**
    * permission
    * @var string
    */
   public $permission;
 
-  public function getPermission(){
+  public function getPermission()
+  {
     return $this->permission;
   }
 

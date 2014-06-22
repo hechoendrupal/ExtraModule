@@ -2,13 +2,13 @@
 
 namespace Drupal\ExtraModule\Twig;
 
-class TwigFilesystemLoader extends \Twig_Loader_Filesystem {
-
+class TwigFilesystemLoader extends \Twig_Loader_Filesystem
+{
   /**
    * locator
    * @var [type]
    */
-	protected $locator;
+    protected $locator;
 
   /**
    * Parser
@@ -21,8 +21,8 @@ class TwigFilesystemLoader extends \Twig_Loader_Filesystem {
    * @param  string $template Template
    * @return [type]           [description]
    */
-  protected function findTemplate($template) {
-
+  protected function findTemplate($template)
+  {
     $logicalName = (string) $template;
 
     if (isset($this->cache[$logicalName])) {
@@ -51,7 +51,7 @@ class TwigFilesystemLoader extends \Twig_Loader_Filesystem {
 
         $path = drupal_get_path('module', $module) ? drupal_get_path('module', $module) : drupal_get_path('theme', $module);
 
-        if (!empty($path)){
+        if (!empty($path)) {
           $file = $path . '/templates/' . $template .'.'. $html . '.' . $twig;
         }
 

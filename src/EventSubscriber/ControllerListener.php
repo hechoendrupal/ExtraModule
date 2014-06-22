@@ -10,8 +10,8 @@ use Doctrine\Common\Util\ClassUtils;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
-class ControllerListener implements EventSubscriberInterface{
-
+class ControllerListener implements EventSubscriberInterface
+{
   /**
    * @var Reader
    */
@@ -22,7 +22,8 @@ class ControllerListener implements EventSubscriberInterface{
    *
    * @param Reader $reader An Reader instance
    */
-  public function __construct(Reader $reader, \Traversable $namespaces, AccountInterface $account){
+  public function __construct(Reader $reader, \Traversable $namespaces, AccountInterface $account)
+  {
       $this->reader = $reader;
       $this->namespace = $namespaces;
       $this->account = $account;
@@ -35,8 +36,8 @@ class ControllerListener implements EventSubscriberInterface{
    *
    * @param FilterControllerEvent $event A FilterControllerEvent instance
    */
-  public function onKernelController(FilterControllerEvent $event){
-
+  public function onKernelController(FilterControllerEvent $event)
+  {
     if (!is_array($controller = $event->getController())) {
       return;
     }
@@ -56,20 +57,20 @@ class ControllerListener implements EventSubscriberInterface{
     $has_permission = false;
     foreach ($this->reader->getMethodAnnotations($method) as $configuration) {
       foreach ($user_roles as $user_role) {
-        if ($user_role->hasPermission($configuration->getPermission())){
+        if ($user_role->hasPermission($configuration->getPermission())) {
           $has_permission = true;
         }
       }
 
-      if (!$has_permission){
+      if (!$has_permission) {
         throw new AccessDeniedHttpException();
       }
     }
 
-
   }
 
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents()
+  {
     return array(
       KernelEvents::CONTROLLER => 'onKernelController',
     );
