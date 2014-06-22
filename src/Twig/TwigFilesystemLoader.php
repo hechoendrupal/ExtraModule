@@ -2,8 +2,13 @@
 
 namespace Drupal\ExtraModule\Twig;
 
+use Drupal\Core\Extension\ModuleHandlerInterface;
+
 class TwigFilesystemLoader extends \Twig_Loader_Filesystem
 {
+
+  const SHORT_NAME = '/^([^:]*):([^:]*):(.+)\.([^\.]+)\.([^\.]+)$/';
+
   /**
    * locator
    * @var [type]
@@ -15,6 +20,11 @@ class TwigFilesystemLoader extends \Twig_Loader_Filesystem
    * @var [type]
    */
   protected $parser;
+
+  public function __construct($drupal_root)
+  {
+    parent::__construct($drupal_root);
+  }
 
   /**
    * Search template
@@ -33,6 +43,7 @@ class TwigFilesystemLoader extends \Twig_Loader_Filesystem
     $previous = null;
 
     try {
+      // find the absolute path
       $file = parent::findTemplate($template);
     } catch (\Twig_Error_Loader $e) {
       $previous = $e;
@@ -43,7 +54,7 @@ class TwigFilesystemLoader extends \Twig_Loader_Filesystem
           throw new \RuntimeException(sprintf('Template name "%s" contains invalid characters.', $name));
         }
 
-        if (!preg_match('/^([^:]*):([^:]*):(.+)\.([^\.]+)\.([^\.]+)$/', $name, $matches)) {
+        if (!preg_match(self::SHORT_NAME, $name, $matches)) {
           throw new \InvalidArgumentException(sprintf('Template name "%s" is not valid (format is "module::templates/template.html.twig").', $name));
         }
 
@@ -65,5 +76,5 @@ class TwigFilesystemLoader extends \Twig_Loader_Filesystem
     }
 
     return $this->cache[$logicalName] = $file;
-}
+  }
 }

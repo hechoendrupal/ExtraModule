@@ -15,7 +15,10 @@ class ExtraModuleServiceCompilerPass implements CompilerPassInterface
    */
   public function process(ContainerBuilder $container)
   {
-    $definition = $container->getDefinition('twig.loader.filesystem');
-    $definition->setClass('Drupal\ExtraModule\Twig\TwigFilesystemLoader');
+    $loader = $container->getDefinition('twig.loader.filesystem');
+    $loader->setClass('Drupal\ExtraModule\Twig\TwigFilesystemLoader');
+    $loader->setArguments([
+      DRUPAL_ROOT,
+    ]);
   }
 }
